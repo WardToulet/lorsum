@@ -1,0 +1,18 @@
+[package]
+name = "lorsum"
+version = "0.1.0"
+authors = [ "Ward Toulet <ward@toulet.net>" ]
+edition = "2018"
+
+[lib]
+name = "lorsum"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lorsum"
+path = "src/bin.rs"
+
+[dependencies]
+structopt = "0.3"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
