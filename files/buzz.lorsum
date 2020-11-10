@@ -1,0 +1,25 @@
+_types
+buzz
+company
+
+_templates
+{ company } is working on { buzz }.
+{ buzz } is now used by { company }.
+At { company } they use { buzz }, { buzz } and { buzz }
+{ buzz } is the future.
+I would like to work at { company }.
+
+_lists
+:company
+google
+apple
+amazon
+microsoft
+oracle
+IBM
+
+:buzz
+blockchain
+agile
+docker
+kubernetes
