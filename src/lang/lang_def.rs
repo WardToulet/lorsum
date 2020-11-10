@@ -16,6 +16,25 @@ enum ParsingMode {
 }
 
 impl LangDef {
+    fn add_type(&mut self, type_name: &str) {
+        self.dictionary.insert(String::from(type_name), Vec::new());
+    }
+
+    fn add_word_to_type(&mut self, type_name: &str, word: &str) -> Result<(), String> {
+        if let Some(word_list) = self.dictionary.get_mut(type_name) {
+            word_list.push(String::from(word));
+            Ok(())
+        } else {
+            Err(format!("No wordlist named {}.", type_name))
+        }
+    }
+
+    // TODO: check if template contains unknown tyeps
+    fn add_template(&mut self, template: &str) -> Result<(), String> {
+        self.templates.push(String::from(template));
+        Ok(())
+    }
+        
     pub fn from_reader<T: Read>(reader: T) -> Result<Self, String> {
         let buffered = BufReader::new(reader);
         let mut lines = buffered.lines();
@@ -33,7 +52,7 @@ impl LangDef {
             }
 
             match mode {
-               ParsingMode::Initial => {
+                ParsingMode::Initial => {
                     match line.as_str() {
                         "_types" => { 
                             mode = ParsingMode::Types;
@@ -49,7 +68,7 @@ impl LangDef {
                             mode = ParsingMode::Templates;
                         },
                         type_name => {
-                            lang_def.dictionary.insert(String::from(type_name), Vec::new());
+                            lang_def.add_type(type_name);
                         },
                     }    
                }, 
@@ -59,12 +78,12 @@ impl LangDef {
                             mode = ParsingMode::Lists;
                         },
                         template => {
-                            lang_def.templates.push(String::from(template));
+                            lang_def.add_template(template)?;
                         },
                     }    
                }, 
                ParsingMode::Lists => {
-                    match line {
+                match line {
                         current_list if line.starts_with(':') => {
                             list_name = Some(String::from(&current_list[1..]));
                         },
@@ -73,14 +92,10 @@ impl LangDef {
                                 return Err(format!("No list started, a list must be started by :ident before items can be provided"));
                             }
 
-                            if let Some(word_list) = lang_def.dictionary.get_mut(&list_name.clone().unwrap()) {
-                                word_list.push(String::from(word));
-                            } else {
-                                return Err(format!("No wordlist named {}.", list_name.unwrap()));
-                            }
+                            lang_def.add_word_to_type(&list_name.clone().unwrap(), &word)?;
                         },
                     }    
-               }
+                }
             }
         }
         Ok(lang_def)
