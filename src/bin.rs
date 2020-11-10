@@ -2,7 +2,8 @@ use structopt::StructOpt;
 use std::fs::File;
 use std::io;
 
-mod lib;
+mod lang;
+use lang::lang_def::LangDef;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "lorsum", about = "lorum ipsum generator")]
@@ -20,7 +21,7 @@ fn main() -> io::Result<()> {
 
     // Open file
     let file = File::open(opt.file.clone())?;
-    let lang_def = lib::LangDef::from_reader(file);
+    let lang_def =  LangDef::from_reader(file);
     println!("{:#?}", lang_def);
     
 
